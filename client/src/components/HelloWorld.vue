@@ -90,6 +90,12 @@ export default {
     return {
       msg: 'Welcome to Your Vue.js App'
     }
+  },
+  mounted () {
+    console.log('Init')
+    if (this.$route.query.id_token) {
+      console.log(this.$route.query.id_token)
+    }
   }
 }
 </script>

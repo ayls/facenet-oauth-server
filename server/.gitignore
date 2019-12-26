@@ -1,6 +1,7 @@
 # Server related
 
 *.pem
+*.jwk
 __pycache__
 
 # Front related

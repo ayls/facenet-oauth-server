@@ -1,4 +1,5 @@
 import jwt
+import random
 import time
 
 ISSUER = 'sample-auth-server'
@@ -15,9 +16,13 @@ def authenticate_user_credentials(username, password):
 def verify_client_info(client_id, redirect_url):
   return True
 
-def generate_access_token():
+def generate_id_token(nonce, client_id):
   payload = {
     "iss": ISSUER,
+    "sub": "{0}".format(random.randint(0, 2147483647)),
+    "nonce": nonce,
+    "aud": client_id,
+    "iat": time.time(),
     "exp": time.time() + JWT_LIFE_SPAN
   }
 

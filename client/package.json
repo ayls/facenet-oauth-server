@@ -13,8 +13,8 @@
     "build": "node build/build.js"
   },
   "dependencies": {
+    "oidc-client": "^1.10.1",
     "vue": "^2.5.2",
-    "vue-authenticate": "^1.4.1",
     "vue-router": "^3.0.1"
   },
   "devDependencies": {
