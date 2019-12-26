@@ -1,3 +1,9 @@
+# Server related
+
+*.pem
+__pycache__
+
+# Front related
 .DS_Store
 node_modules/
 /dist/
