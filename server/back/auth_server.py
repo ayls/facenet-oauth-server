@@ -36,7 +36,7 @@ def auth():
   state = request.args.get('state')
   nonce = request.args.get('nonce')  
 
-  if None in [ client_id, redirect_uri ]:
+  if None in [ client_id, redirect_uri, state, nonce ]:
     return json.dumps({
       "error": "invalid_request"
     }), 400
@@ -55,14 +55,13 @@ def auth():
 @app.route('/signin', methods = ['POST'])
 def signin():
   # Issues authorization code
-  username = request.form.get('username')
-  password = request.form.get('password')
+  captured_image_data = request.form.get('captured_image_data')  
   client_id = request.form.get('client_id')
   redirect_uri = request.form.get('redirect_uri')
   state = request.form.get('state')  
   nonce = request.form.get('nonce')    
 
-  if None in [username, password, client_id, redirect_uri]:
+  if None in [captured_image_data, client_id, redirect_uri, state, nonce]:
     return json.dumps({
       "error": "invalid_request"
     }), 400
@@ -72,7 +71,7 @@ def signin():
       "error": "invalid_client"
     })  
 
-  if not authenticate_user_credentials(username, password):
+  if not authenticate_user_credentials(captured_image_data):
     return json.dumps({
       'error': 'access_denied'
     }), 401

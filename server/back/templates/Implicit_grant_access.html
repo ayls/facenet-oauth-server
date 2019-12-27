@@ -8,7 +8,7 @@
       body {
         background-color: #F0F0F0;
       }
-      button {
+      button, input[type=submit] {
         background-color: #4CAF50; /* Green */
         border: none;
         color: white;
@@ -37,30 +37,24 @@
   <body>
     <div id="app">
       <button id="play">Start webcam</button>
-      <video id="video" width="640" height="480"></video>
-      <button id="capture">Verify my identity</button>
-      <canvas id="canvas" width="640" height="480"></canvas>
-
-      <form action="/signin" method="post">
-        <p>Username:</p>
-        <input type="text" name="username">
-        <p>Password:</p>
-        <input type="Password" name="password">
+      <video id="video" width="640" height="480"></video>  
+      <canvas id="canvas" width="640" height="480" hidden></canvas>       
+      <form action="/signin" method="post" onsubmit="return takeSnapshotAndSubmit()">
+        <input type="hidden" id="captured_image_data" name="captured_image_data">        
         <input type="hidden" name="client_id" value="{{client_id}}">
         <input type="hidden" name="redirect_uri" value="{{redirect_uri}}">
         <input type="hidden" name="state" value="{{state}}">    
         <input type="hidden" name="nonce" value="{{nonce}}">        
-        <p>
-          <input type="submit" value="Sign in">
-        </p>
+        <input id="submit" type="submit" value="Verify my identity" style="display: none;">
       </form>       
     </div>
 
     <script>
-      const video = document.getElementById('video')
-      const canvas = document.getElementById('canvas')
+      const video = document.getElementById("video")
+      const canvas = document.getElementById("canvas")
       const play = document.getElementById("play")
-      const capture = document.getElementById("capture")
+      const submit = document.getElementById("submit")      
+      const capturedImageData = document.getElementById("captured_image_data")      
 
       function init() {
         if (navigator.mediaDevices && navigator.mediaDevices.getUserMedia) {
@@ -71,12 +65,18 @@
       }
 
       play.addEventListener("click", function() {
-	      video.play()
+        video.play()
+        play.style.display = "none"
+        submit.style.display = "block"
       })
 
-      capture.addEventListener("click", function() {
-	      canvas.getContext('2d').drawImage(video, 0, 0, 640, 480)
-      })
+      function takeSnapshotAndSubmit() {
+        const ctx = canvas.getContext("2d")
+	      ctx.drawImage(video, 0, 0, 640, 480)
+        const dataUrl = canvas.toDataURL("image/jpeg")
+        capturedImageData.value = dataUrl
+        return true
+      }
 
       init()
     </script>       

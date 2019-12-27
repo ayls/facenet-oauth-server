@@ -20624,7 +20624,6 @@ var ResponseValidator = exports.ResponseValidator = function () {
                 }
 
                 _Log.Log.debug("ResponseValidator._validateIdToken: Received signing keys");
-                debugger;
                 var key = void 0;
                 if (!kid) {
                     keys = _this6._filterByAlg(keys, jwt.header.alg);
