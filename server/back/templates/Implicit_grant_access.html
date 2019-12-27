@@ -1,23 +1,84 @@
 <!DOCTYPE html>
 <html>
-<head>
-  <title>Sign in</title>
-</head>
-<body>
-  <h3>{{client_id}} is requesting access to your account:</h3>
-  <p>Sign in to grant {{client_id}} access.</p>
-  <form action="/signin" method="post">
-    <p>Username:</p>
-    <input type="text" name="username">
-    <p>Password:</p>
-    <input type="Password" name="password">
-    <input type="hidden" name="client_id" value="{{client_id}}">
-    <input type="hidden" name="redirect_uri" value="{{redirect_uri}}">
-    <input type="hidden" name="state" value="{{state}}">    
-    <input type="hidden" name="nonce" value="{{nonce}}">        
-    <p>
-      <input type="submit" value="Sign in">
-    </p>
-  </form>
-</body>
+  <head>
+    <meta charset="utf-8">
+    <meta name="viewport" content="width=device-width,initial-scale=1.0">
+    <title>Sign in</title>
+    <style>
+      body {
+        background-color: #F0F0F0;
+      }
+      button {
+        background-color: #4CAF50; /* Green */
+        border: none;
+        color: white;
+        margin: 10px auto 10px auto;
+        padding: 15px 32px;
+        text-align: center;
+        text-decoration: none;
+        display: block;
+        font-size: 16px;
+        width: 640px
+      }
+      #app {
+        text-align: center;
+        color: #2c3e50;
+        margin-top: 60px;
+      }
+      #controls {
+        text-align: center;
+        width: 640px;
+      }
+      #video {
+        background-color: #000000;
+      }
+    </style>
+  </head>
+  <body>
+    <div id="app">
+      <button id="play">Start webcam</button>
+      <video id="video" width="640" height="480"></video>
+      <button id="capture">Verify my identity</button>
+      <canvas id="canvas" width="640" height="480"></canvas>
+
+      <form action="/signin" method="post">
+        <p>Username:</p>
+        <input type="text" name="username">
+        <p>Password:</p>
+        <input type="Password" name="password">
+        <input type="hidden" name="client_id" value="{{client_id}}">
+        <input type="hidden" name="redirect_uri" value="{{redirect_uri}}">
+        <input type="hidden" name="state" value="{{state}}">    
+        <input type="hidden" name="nonce" value="{{nonce}}">        
+        <p>
+          <input type="submit" value="Sign in">
+        </p>
+      </form>       
+    </div>
+
+    <script>
+      const video = document.getElementById('video')
+      const canvas = document.getElementById('canvas')
+      const play = document.getElementById("play")
+      const capture = document.getElementById("capture")
+
+      function init() {
+        if (navigator.mediaDevices && navigator.mediaDevices.getUserMedia) {
+          navigator.mediaDevices.getUserMedia({ video: true, audio: false }).then(stream => {
+            video.srcObject = stream
+          })
+        }
+      }
+
+      play.addEventListener("click", function() {
+	      video.play()
+      })
+
+      capture.addEventListener("click", function() {
+	      canvas.getContext('2d').drawImage(video, 0, 0, 640, 480)
+      })
+
+      init()
+    </script>       
+  </body>
 </html>
