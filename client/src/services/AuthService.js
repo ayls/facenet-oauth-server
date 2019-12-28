@@ -1,229 +1,97 @@
+import Vue from 'vue'
 import Oidc from 'oidc-client'
 
-var mgr = new Oidc.UserManager({
-  userStore: new Oidc.WebStorageStateStore(),
-  authority: 'http://127.0.0.1:5001',
-  client_id: 'sample-client',
-  redirect_uri: window.location.origin + '/static/callback.html',
-  response_type: 'id_token',
-  scope: 'openid',
-  metadata: {
-    issuer: 'sample-auth-server',
-    authorization_endpoint: 'http://127.0.0.1:5001/auth',
-    jwks_uri: 'http://127.0.0.1:5001/jwks'
-  }
-})
+/** Define a default action to perform after authentication */
+const DEFAULT_REDIRECT_CALLBACK = () =>
+  window.history.replaceState({}, document.title, window.location.pathname)
 
-Oidc.Log.logger = console
-Oidc.Log.level = Oidc.Log.INFO
+let instance
 
-mgr.events.addUserLoaded(function (user) {
-  console.log('New User Loaded：', arguments)
-  console.log('Acess_token: ', user.access_token)
-})
+/** Returns the current instance of the SDK */
+export const getInstance = () => instance
 
-mgr.events.addAccessTokenExpiring(function () {
-  console.log('AccessToken Expiring：', arguments)
-})
+/** Creates an instance of the OIDC client. If one has already been created, it returns that instance */
+export const useOidcClient = ({
+  onRedirectCallback = DEFAULT_REDIRECT_CALLBACK,
+  redirectUri = window.location.origin,
+  ...options
+}) => {
+  if (instance) return instance
 
-mgr.events.addAccessTokenExpired(function () {
-  console.log('AccessToken Expired：', arguments)
-  alert('Session expired. Going out!')
-  mgr.signoutRedirect().then(function (resp) {
-    console.log('signed out', resp)
-  }).catch(function (err) {
-    console.log(err)
-  })
-})
-
-mgr.events.addSilentRenewError(function () {
-  console.error('Silent Renew Error：', arguments)
-})
-
-mgr.events.addUserSignedOut(function () {
-  alert('Going out!')
-  console.log('UserSignedOut：', arguments)
-  mgr.signoutRedirect().then(function (resp) {
-    console.log('signed out', resp)
-  }).catch(function (err) {
-    console.log(err)
-  })
-})
-
-export default class AuthService {
-  // Renew the token manually
-//   renewToken () {
-//     let self = this
-//     return new Promise((resolve, reject) => {
-//       mgr.signinSilent().then(function (user) {
-//         if (user == null) {
-//           self.signIn(null)
-//         } else{
-//           return resolve(user)
-//         }
-//       }).catch(function (err) {
-//         console.log(err)
-//         return reject(err)
-//       });
-//     })
-//   }
-
-//   // Get the user who is logged in
-//   getUser () {
-//     let self = this
-//     return new Promise((resolve, reject) => {
-//       mgr.getUser().then(function (user) {
-//         if (user == null) {
-//           self.signIn()
-//           return resolve(null)
-//         } else {
-//           return resolve(user)
-//         }
-//       }).catch(function (err) {
-//         console.log(err)
-//         return reject(err)
-//       });
-//     })
-//   }
-
-  // Check if there is any user logged in
-  getSignedIn () {
-    return new Promise((resolve, reject) => {
-      mgr.getUser().then((user) => {
-        if (user == null) {
-          this.signIn()
-          return resolve(false)
-        } else {
-          return resolve(true)
+  // The 'instance' is simply a Vue object
+  instance = new Vue({
+    data () {
+      return {
+        loading: true,
+        isAuthenticated: false,
+        user: {},
+        oidcClient: null,
+        error: null
+      }
+    },
+    methods: {
+      /** Handles the callback when logging in using a redirect */
+      async handleRedirectCallback () {
+        this.loading = true
+        try {
+          this.user = await this.oidcClient.signinRedirectCallback()
+          this.isAuthenticated = true
+        } catch (e) {
+          this.error = e
+        } finally {
+          this.loading = false
         }
-      }).catch(function (err) {
-        console.log(err)
-        return reject(err)
+      },
+      /** Authenticates the user using the redirect method */
+      loginWithRedirect () {
+        return this.oidcClient.signinRedirect()
+      },
+      /** Logs the user out and removes their session on the authorization server */
+      async logout () {
+        await this.oidcClient.signoutRedirect()
+      }
+    },
+    /** Use this lifecycle method to instantiate the OIDC client */
+    async created () {
+      // Create a new instance of OIDC client using members of the given options object
+      this.oidcClient = new Oidc.UserManager({
+        userStore: new Oidc.WebStorageStateStore(),
+        authority: options.authority,
+        client_id: options.client_id,
+        redirect_uri: redirectUri,
+        response_type: options.response_type,
+        scope: options.scope,
+        metadata: options.metadata
       })
-    })
+
+      try {
+        // If the user is returning to the app after authentication..
+        if (
+          window.location.hash.includes('id_token=') &&
+          window.location.hash.includes('state=') &&
+          window.location.hash.includes('expires_in=')
+        ) {
+          // handle the redirect
+          await this.handleRedirectCallback()
+          onRedirectCallback()
+        }
+      } catch (e) {
+        this.error = e
+      } finally {
+        // Initialize our internal authentication state
+        this.user = await this.oidcClient.getUser()
+        this.isAuthenticated = this.user != null
+        this.loading = false
+      }
+    }
+  })
+
+  return instance
+}
+
+// Create a simple Vue plugin to expose the wrapper object throughout the application
+export const OidcClientPlugin = {
+  install (Vue, options) {
+    Vue.prototype.$auth = useOidcClient(options)
   }
-
-  // Redirect of the current window to the authorization endpoint.
-  signIn () {
-    mgr.signinRedirect().catch(function (err) {
-      console.log(err)
-    })
-  }
-
-//   // Redirect of the current window to the end session endpoint
-//   signOut () {
-//     mgr.signoutRedirect().then(function (resp) {
-//       console.log('signed out', resp);
-//     }).catch(function (err) {
-//       console.log(err)
-//     })
-//   }
-
-//   // Get the profile of the user logged in
-//   getProfile () {
-//     let self = this
-//     return new Promise((resolve, reject) => {
-//       mgr.getUser().then(function (user) {
-//         if (user == null) {
-//           self.signIn()
-//           return resolve(null)
-//         } else {
-//           return resolve(user.profile)
-//         }
-//       }).catch(function (err) {
-//         console.log(err)
-//         return reject(err)
-//       });
-//     })
-//   }
-
-//   // Get the token id
-//   getIdToken() {
-//     let self = this
-//     return new Promise((resolve, reject) => {
-//       mgr.getUser().then(function (user) {
-//         if (user == null) {
-//           self.signIn()
-//           return resolve(null)
-//         } else {
-//           return resolve(user.id_token)
-//         }
-//       }).catch(function (err) {
-//         console.log(err)
-//         return reject(err)
-//       });
-//     })
-//   }
-
-//   // Get the session state
-//   getSessionState() {
-//     let self = this
-//     return new Promise((resolve, reject) => {
-//       mgr.getUser().then(function (user) {
-//         if (user == null) {
-//           self.signIn()
-//           return resolve(null)
-//         } else {
-//           return resolve(user.session_state)
-//         }
-//       }).catch(function (err) {
-//         console.log(err)
-//         return reject(err)
-//       });
-//     })
-//   }
-
-//   // Get the access token of the logged in user
-//   getAcessToken() {
-//     let self = this
-//     return new Promise((resolve, reject) => {
-//       mgr.getUser().then(function (user) {
-//         if (user == null) {
-//           self.signIn()
-//           return resolve(null)
-//         } else {
-//           return resolve(user.access_token)
-//         }
-//       }).catch(function (err) {
-//         console.log(err)
-//         return reject(err)
-//       });
-//     })
-//   }
-
-//   // Takes the scopes of the logged in user
-//   getScopes() {
-//     let self = this
-//     return new Promise((resolve, reject) => {
-//       mgr.getUser().then(function (user) {
-//         if (user == null) {
-//           self.signIn()
-//           return resolve(null)
-//         } else {
-//           return resolve(user.scopes)
-//         }
-//       }).catch(function (err) {
-//         console.log(err)
-//         return reject(err)
-//       });
-//     })
-//   }
-
-//   // Get the user roles logged in
-//   getRole () {
-//     let self = this
-//     return new Promise((resolve, reject) => {
-//       mgr.getUser().then(function (user) {
-//         if (user == null) {
-//           self.signIn()
-//           return resolve(null)
-//         } else {
-//           return resolve(user.profile.role)
-//         }
-//       }).catch(function (err) {
-//         console.log(err)
-//         return reject(err)
-//       });
-//     })
-//   }
 }

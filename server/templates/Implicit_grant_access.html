@@ -7,9 +7,13 @@
     <style>
       body {
         background-color: #F0F0F0;
+        font-family: Arial, Helvetica, sans-serif;
+      }
+      h1 {
+        font-weight: normal;        
       }
       button, input[type=submit] {
-        background-color: #4CAF50; /* Green */
+        background-color: #41B883;
         border: none;
         color: white;
         margin: 10px auto 10px auto;
@@ -25,10 +29,6 @@
         color: #2c3e50;
         margin-top: 60px;
       }
-      #controls {
-        text-align: center;
-        width: 640px;
-      }
       #video {
         background-color: #000000;
       }
@@ -36,7 +36,8 @@
   </head>
   <body>
     <div id="app">
-      <button id="play">Start webcam</button>
+      <h1>Verify your identity</h1>      
+      <button id="play">Start your webcam to begin</button>
       <video id="video" width="640" height="480"></video>  
       <canvas id="canvas" width="640" height="480" hidden></canvas>       
       <form action="/signin" method="post" onsubmit="return takeSnapshotAndSubmit()">

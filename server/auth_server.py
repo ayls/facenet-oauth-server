@@ -52,6 +52,13 @@ def auth():
                          state=state,
                          nonce=nonce)
 
+@app.route('/signout')
+def signout():
+  # id_token_hint = request.args.get('id_token_hint')
+  # revoke the token here
+
+  return render_template('Implicit_grant_signed_out.html')
+
 @app.route('/signin', methods = ['POST'])
 def signin():
   # Issues authorization code

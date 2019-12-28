@@ -20,13 +20,16 @@ def authenticate_user_credentials(image):
   #   f.write(body)
   return True
 
-def verify_client_info(client_id, redirect_url):
+def verify_client_info(client_id, redirect_uri):
+  # verify client_id and redirect_uri validity
   return True
 
 def generate_id_token(nonce, client_id):
+  # TODO: update sub and name
   payload = {
     "iss": ISSUER,
     "sub": "{0}".format(random.randint(0, 2147483647)),
+    "name": "Ales",
     "nonce": nonce,
     "aud": client_id,
     "iat": time.time(),
