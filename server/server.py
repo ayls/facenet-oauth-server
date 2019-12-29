@@ -28,7 +28,10 @@ def jwks():
   # Return jwks definition
   json_url = os.path.join(app.root_path, "public.jwk")
   data = json.load(open(json_url))
-  return jsonify(data)
+  wrapped_data = {
+    "keys": [ data ]
+  }
+  return jsonify(wrapped_data)
 
 @app.route('/auth')
 def auth():
