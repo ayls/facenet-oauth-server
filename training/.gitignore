@@ -1,1 +1,4 @@
 test_images
+training_images
+*.pt
+*.npy
