@@ -5,7 +5,7 @@ from torchvision import datasets
 import numpy as np
 import os
 
-DETECTION_THRESHOLD = 0.8
+DETECTION_THRESHOLD = 1
 
 workers = 0 if os.name == 'nt' else 4
 

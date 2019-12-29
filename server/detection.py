@@ -7,7 +7,7 @@ import os
 import io
 from PIL import Image
 
-DETECTION_THRESHOLD = 0.8
+DETECTION_THRESHOLD = 1
 
 class Detection:
 
