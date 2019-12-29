@@ -5,6 +5,8 @@ from torchvision import datasets
 import numpy as np
 import os
 
+DETECTION_THRESHOLD = 0.8
+
 workers = 0 if os.name == 'nt' else 4
 
 device = torch.device('cuda:0' if torch.cuda.is_available() else 'cpu')
@@ -45,18 +47,18 @@ embeddings = resnet(aligned).detach().cpu()
 
 # calculate distances and display detection results
 results = []
-for idx, e1 in enumerate(embeddings):
+for e1 in embeddings:
   minDiff = 100
   minDiffIdx = -1
-  for e2 in stored_embeddings:
+  for idx, e2 in enumerate(stored_embeddings):
     diff = (e1 - e2).norm().item()
-    if diff < minDiff and diff < 0.75:
+    if diff < minDiff and diff < DETECTION_THRESHOLD:
       minDiff = diff
       minDiffIdx = idx
   if minDiffIdx >= 0:
     results.append(stored_names[minDiffIdx])
   else:
-    results.append('Unknown')    
+    results.append(None)    
 
 print(results)
 

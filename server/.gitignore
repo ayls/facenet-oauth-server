@@ -2,6 +2,8 @@
 
 *.pem
 *.jwk
+*.pt
+*.npy
 __pycache__
 
 # Front related

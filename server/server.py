@@ -2,15 +2,17 @@ import os
 import json
 #import ssl
 import urllib.parse as urlparse
+import jwt_util
 
 from urllib.parse import urlencode
-from auth import (authenticate_user_credentials, generate_id_token,  
-                  verify_client_info, JWT_LIFE_SPAN)
-from flask import Flask, redirect, render_template, request, jsonify
+from jwt_util import (JWT_LIFE_SPAN)
+from flask import Flask, redirect, render_template, request, url_for, jsonify
 from flask_cors import CORS
 
 app = Flask(__name__)
 CORS(app)
+
+jwt = jwt_util.JwtUtil()
 
 def process_redirect_uri(redirect_uri, new_entries):
   # Prepare the redirect URL
@@ -34,30 +36,34 @@ def auth():
   client_id = request.args.get('client_id')
   redirect_uri = request.args.get('redirect_uri')
   state = request.args.get('state')
-  nonce = request.args.get('nonce')  
+  nonce = request.args.get('nonce')
 
   if None in [ client_id, redirect_uri, state, nonce ]:
     return json.dumps({
       "error": "invalid_request"
     }), 400
 
-  if not verify_client_info(client_id, redirect_uri):
+  if not jwt.verify_client_info(client_id, redirect_uri):
     return json.dumps({
       "error": "invalid_client"
     })
 
-  return render_template('Implicit_grant_access.html',
+  return render_template('sign_in.html',
                          client_id = client_id,
-                         redirect_uri = redirect_uri,
-                         state=state,
-                         nonce=nonce)
+                         redirect_uri = redirect_uri,                         
+                         state = state,
+                         nonce = nonce)
 
 @app.route('/signout')
 def signout():
   # id_token_hint = request.args.get('id_token_hint')
   # revoke the token here
 
-  return render_template('Implicit_grant_signed_out.html')
+  return render_template('signed_out.html')
+
+@app.route('/accessdenied')
+def accessdenied():
+  return render_template('access_denied.html')  
 
 @app.route('/signin', methods = ['POST'])
 def signin():
@@ -73,17 +79,16 @@ def signin():
       "error": "invalid_request"
     }), 400
 
-  if not verify_client_info(client_id, redirect_uri):
+  if not jwt.verify_client_info(client_id, redirect_uri):
     return json.dumps({
       "error": "invalid_client"
-    })  
+    }), 401  
 
-  if not authenticate_user_credentials(captured_image_data):
-    return json.dumps({
-      'error': 'access_denied'
-    }), 401
+  username = jwt.authenticate_user_credentials(captured_image_data)
+  if username is None:
+    return redirect(url_for('accessdenied'), 302)
 
-  id_token = generate_id_token(nonce, client_id)
+  id_token = jwt.generate_id_token(nonce, client_id, username)
 
   return redirect(process_redirect_uri(redirect_uri, {
     'id_token': id_token,
