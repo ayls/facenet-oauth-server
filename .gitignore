@@ -1,5 +1,9 @@
-# Server related
+# Training & Server related
 
+training/test_images/**
+!training/test_images/.gitkeep
+training/training_images/**
+!training/training_images/.gitkeep
 *.pem
 *.jwk
 *.pt

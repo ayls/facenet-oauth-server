@@ -1,6 +1,0 @@
-/test_images/**
-!/test_images/.gitkeep
-/training_images/**
-!/training_images/.gitkeep
-*.pt
-*.npy

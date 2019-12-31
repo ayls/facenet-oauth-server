@@ -4,11 +4,11 @@ A PoC OAuth server that uses face detection (based on FaceNet) instead of userna
 
 ## Setup
 
-### Python environment Setup
+### Python (3.7) environment Setup
 
 ``` bash
 # install PyTorch
-pip3 install torch===1.3.1 torchvision===0.4.2 -f https://download.pytorch.org/whl/torch_stable.html
+pip install torch===1.3.1 torchvision===0.4.2 -f https://download.pytorch.org/whl/torch_stable.html
 
 # install other requirements
 pip install -r requirements.txt
