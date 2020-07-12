@@ -11,13 +11,7 @@ Vue.use(OidcClientPlugin, {
   authority: 'http://127.0.0.1:5001',
   client_id: 'sample-client',
   response_type: 'id_token',
-  scope: 'openid',
-  metadata: {
-    issuer: 'sample-auth-server',
-    authorization_endpoint: 'http://127.0.0.1:5001/auth',
-    end_session_endpoint: 'http://127.0.0.1:5001/signout',
-    jwks_uri: 'http://127.0.0.1:5001/jwks'
-  }
+  scope: 'openid'
 })
 
 /* eslint-disable no-new */

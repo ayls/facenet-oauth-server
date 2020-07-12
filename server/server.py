@@ -23,6 +23,18 @@ def process_redirect_uri(redirect_uri, new_entries):
   url = redirect_uri + "#" + url_parts[4]
   return url
 
+@app.route('/.well-known/openid-configuration')
+def wellKnownConfig():
+  # Return jwks definition
+  wrapped_data = {
+    "issuer": jwt_util.ISSUER,
+    "authorization_endpoint": request.host_url +"auth",
+    "end_session_endpoint": request.host_url + "signout",
+    "jwks_uri": request.host_url + "jwks"
+  }
+  return jsonify(wrapped_data)
+
+
 @app.route('/jwks')
 def jwks():
   # Return jwks definition
