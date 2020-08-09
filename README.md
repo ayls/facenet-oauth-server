@@ -50,6 +50,7 @@ cp names.npy ../server/names.npy
 
 ### Generate RSA keys
 ``` bash
+# cd into server directory
 cd server
 
 # prepare private key (do not specify passphrase)
@@ -65,6 +66,9 @@ pem-jwk public.pem > public.jwk
 
 ### Configure OTP
 ``` bash
+# cd into server directory
+cd server
+
 # run interactive python prompt
 python
 
@@ -78,11 +82,20 @@ USER_OTP_SECRETS = { 'YourUsername': 'ValueReturnedByPyOTP' }
 
 ### Run Server
 ``` bash
+# cd into server directory
+cd server
+
 # set environment (production or development)
 export FLASK_ENV=development
 
 # serve with hot reload at 127.0.0.1:5001
 python server.py
+```
+
+### Building Server Docker image
+``` bash
+# run from root directory, replace <environment> with development or production
+docker build --build-arg FLASK_ENV=<environment> -t facenet-oauth-server -f server/Dockerfile .
 ```
 
 ### Run Client

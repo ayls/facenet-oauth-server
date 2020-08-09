@@ -1,4 +1,6 @@
 class Config(object):
+  ISSUER = 'sample-auth-server'
+  JWT_LIFE_SPAN = 1800  
   CLIENT_IDS = []
   REDIRRECT_URIS = []
   USER_OTP_SECRETS = {}
