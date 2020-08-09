@@ -74,7 +74,10 @@ pyotp.random_base32()  # note the return value and use this to configure your au
 
 # update USER_OTP_SECRETS config.py under DevelopmentConfig
 USER_OTP_SECRETS = { 'YourUsername': 'ValueReturnedByPyOTP' }
+```
 
+### Run Server
+``` bash
 # set environment (production or development)
 export FLASK_ENV=development
 
@@ -82,7 +85,7 @@ export FLASK_ENV=development
 python server.py
 ```
 
-### Sample Client Setup
+### Run Client
 
 ``` bash
 # cd into client directory
