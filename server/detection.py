@@ -41,7 +41,7 @@ class Detection:
     aligned = []
     x_aligned, prob = self.mtcnn(x, return_prob=True)
     if x_aligned is not None:
-      print('Face detected with probability: {:8f}'.format(prob))
+      # print('Face detected with probability: {:8f}'.format(prob))
       aligned.append(x_aligned)
 
     # run facenet

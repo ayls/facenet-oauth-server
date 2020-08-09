@@ -27,10 +27,10 @@ def process_redirect_uri(redirect_uri, new_entries):
 def wellKnownConfig():
   # Return jwks definition
   wrapped_data = {
-    "issuer": jwt_util.ISSUER,
-    "authorization_endpoint": request.host_url +"auth",
-    "end_session_endpoint": request.host_url + "signout",
-    "jwks_uri": request.host_url + "jwks"
+    'issuer': jwt_util.ISSUER,
+    'authorization_endpoint': request.host_url +'auth',
+    'end_session_endpoint': request.host_url + 'signout',
+    'jwks_uri': request.host_url + 'jwks'
   }
   return jsonify(wrapped_data)
 
@@ -38,7 +38,7 @@ def wellKnownConfig():
 @app.route('/jwks')
 def jwks():
   # Return jwks definition
-  json_url = os.path.join(app.root_path, "public.jwk")
+  json_url = os.path.join(app.root_path, 'public.jwk')
   data = json.load(open(json_url))
   wrapped_data = {
     "keys": [ data ]
@@ -55,12 +55,12 @@ def auth():
 
   if None in [ client_id, redirect_uri, state, nonce ]:
     return json.dumps({
-      "error": "invalid_request"
+      'error': 'invalid_request'
     }), 400
 
   if not jwt.verify_client_info(app.config, client_id, redirect_uri):
     return json.dumps({
-      "error": "invalid_client"
+      'error': 'invalid_client'
     })
 
   return render_template('sign_in.html',
@@ -83,23 +83,24 @@ def accessdenied():
 @app.route('/signin', methods = ['POST'])
 def signin():
   # Issues authorization code
-  captured_image_data = request.form.get('captured_image_data')  
+  captured_image_data = request.form.get('captured_image_data')
+  otp = request.form.get('otp')
   client_id = request.form.get('client_id')
   redirect_uri = request.form.get('redirect_uri')
-  state = request.form.get('state')  
-  nonce = request.form.get('nonce')    
+  state = request.form.get('state') 
+  nonce = request.form.get('nonce')
 
-  if None in [captured_image_data, client_id, redirect_uri, state, nonce]:
+  if None in [captured_image_data, otp, client_id, redirect_uri, state, nonce]:
     return json.dumps({
-      "error": "invalid_request"
+      'error': 'invalid_request'
     }), 400
 
   if not jwt.verify_client_info(app.config, client_id, redirect_uri):
     return json.dumps({
-      "error": "invalid_client"
+      'error": "invalid_client'
     }), 401  
 
-  username = jwt.authenticate_user_credentials(captured_image_data)
+  username = jwt.authenticate_user_credentials(app.config, captured_image_data, otp)
   if username is None:
     return redirect(url_for('accessdenied'), 302)
 
@@ -113,10 +114,10 @@ def signin():
 
 
 if __name__ == '__main__':
-  if app.config["ENV"] == "production":
-    app.config.from_object("config.ProductionConfig")
+  if app.config['ENV'] == 'production':
+    app.config.from_object('config.ProductionConfig')
   else:
-    app.config.from_object("config.DevelopmentConfig")
+    app.config.from_object('config.DevelopmentConfig')
   #context = ssl.SSLContext(ssl.PROTOCOL_TLSv1_2)
   #context.load_cert_chain('domain.crt', 'domain.key')
   #app.run(port = 5000, debug = True, ssl_context = context)

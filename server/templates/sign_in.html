@@ -32,6 +32,11 @@
       #video {
         background-color: #000000;
       }
+      #otp {
+        margin: 10px auto 0 auto;
+        width: 634px;
+        font-size: 20px;
+      }
     </style>
   </head>
   <body>
@@ -41,11 +46,12 @@
       <video id="video" width="640" height="480"></video>  
       <canvas id="canvas" width="640" height="480" hidden></canvas>       
       <form action="/signin" method="post" onsubmit="return takeSnapshotAndSubmit()">
-        <input type="hidden" id="captured_image_data" name="captured_image_data">        
+        <input type="hidden" id="captured_image_data" name="captured_image_data">
         <input type="hidden" name="client_id" value="{{client_id}}">
         <input type="hidden" name="redirect_uri" value="{{redirect_uri}}">
-        <input type="hidden" name="state" value="{{state}}">    
-        <input type="hidden" name="nonce" value="{{nonce}}">        
+        <input type="hidden" name="state" value="{{state}}">
+        <input type="hidden" name="nonce" value="{{nonce}}">
+        <input type="number" id="otp" name="otp" value="{{otp}}" placeholder="OTP" style="display: none;">
         <input id="submit" type="submit" value="Verify my identity" style="display: none;">
       </form>       
     </div>
@@ -54,6 +60,7 @@
       const video = document.getElementById("video")
       const canvas = document.getElementById("canvas")
       const play = document.getElementById("play")
+      const otp = document.getElementById("otp");
       const submit = document.getElementById("submit")      
       const capturedImageData = document.getElementById("captured_image_data")      
 
@@ -68,6 +75,7 @@
       play.addEventListener("click", function() {
         video.play()
         play.style.display = "none"
+        otp.style.display = "block"        
         submit.style.display = "block"
       })
 

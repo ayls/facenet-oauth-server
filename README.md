@@ -61,6 +61,19 @@ openssl rsa -in private.pem -pubout -outform PEM -out public.pem
 # prepare jwk file
 npm install -g pem-jwk
 pem-jwk public.pem > public.jwk
+```
+
+### Configure OTP
+``` bash
+# run interactive python prompt
+python
+
+# execute the following:
+import pyotp
+pyotp.random_base32()  # note the return value and use this to configure your authenticator App
+
+# update USER_OTP_SECRETS config.py under DevelopmentConfig
+USER_OTP_SECRETS = { 'YourUsername': 'ValueReturnedByPyOTP' }
 
 # set environment (production or development)
 export FLASK_ENV=development
