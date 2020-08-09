@@ -48,7 +48,7 @@ class Detection:
     aligned = torch.stack(aligned).to(self.device)
     embeddings = self.resnet(aligned).detach().cpu()
 
-    # calculate distances and display detection results
+    # calculate distances and return detection results
     result = None
     e1 = embeddings[0]
     minDiff = 100

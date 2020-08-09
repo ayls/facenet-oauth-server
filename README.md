@@ -62,6 +62,9 @@ openssl rsa -in private.pem -pubout -outform PEM -out public.pem
 npm install -g pem-jwk
 pem-jwk public.pem > public.jwk
 
+# set environment (production or development)
+export FLASK_ENV=development
+
 # serve with hot reload at 127.0.0.1:5001
 python server.py
 ```

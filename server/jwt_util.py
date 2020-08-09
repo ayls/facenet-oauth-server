@@ -20,9 +20,14 @@ class JwtUtil:
     body = base64.decodebytes(image_encoded.encode('utf-8'))        
     return self.detection.detect(body)
 
-  def verify_client_info(self, client_id, redirect_uri):
+  def verify_client_info(self, app_config, client_id, redirect_uri):
     # verify client_id and redirect_uri validity
-    return True
+    try:
+      client_id_idx = app_config["CLIENT_IDS"].index(client_id)
+      redirect_uri_idx = app_config["REDIRRECT_URIS"].index(redirect_uri)
+      return client_id_idx == redirect_uri_idx
+    except:
+      return False
 
   def generate_id_token(self, nonce, client_id, username):
     payload = {

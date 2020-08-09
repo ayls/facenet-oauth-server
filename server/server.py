@@ -58,7 +58,7 @@ def auth():
       "error": "invalid_request"
     }), 400
 
-  if not jwt.verify_client_info(client_id, redirect_uri):
+  if not jwt.verify_client_info(app.config, client_id, redirect_uri):
     return json.dumps({
       "error": "invalid_client"
     })
@@ -94,7 +94,7 @@ def signin():
       "error": "invalid_request"
     }), 400
 
-  if not jwt.verify_client_info(client_id, redirect_uri):
+  if not jwt.verify_client_info(app.config, client_id, redirect_uri):
     return json.dumps({
       "error": "invalid_client"
     }), 401  
@@ -113,6 +113,10 @@ def signin():
 
 
 if __name__ == '__main__':
+  if app.config["ENV"] == "production":
+    app.config.from_object("config.ProductionConfig")
+  else:
+    app.config.from_object("config.DevelopmentConfig")
   #context = ssl.SSLContext(ssl.PROTOCOL_TLSv1_2)
   #context.load_cert_chain('domain.crt', 'domain.key')
   #app.run(port = 5000, debug = True, ssl_context = context)
