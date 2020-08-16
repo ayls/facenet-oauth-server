@@ -108,7 +108,7 @@ def signin():
   if username is None:
     return redirect(url_for('accessdenied'), 302)
 
-  id_token = jwt.generate_id_token(nonce, client_id, username)
+  id_token = jwt.generate_id_token(client_id, username, nonce)
 
   return redirect(process_redirect_uri(redirect_uri, {
     'id_token': id_token,
