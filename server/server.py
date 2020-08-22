@@ -33,7 +33,15 @@ def wellKnownConfig():
     'issuer': app.config['ISSUER'],
     'authorization_endpoint': request.host_url +'auth',
     'end_session_endpoint': request.host_url + 'signout',
-    'jwks_uri': request.host_url + 'jwks'
+    'jwks_uri': request.host_url + 'jwks',
+    'token_endpoint_auth_methods_supported': 'none',    
+    'response_types_supported': [ 'id_token' ],
+    'esponse_modes_supported': [ 'query' ],
+    'subject_types_supported': [ 'public' ],
+    'id_token_signing_alg_values_supported': [ 'RS256' ],
+    'grant_types_supported': [ 'implicit' ],	
+    'scopes_supported': [ 'openid' ],
+    'request_uri_parameter_supported': False
   }
   return jsonify(wrapped_data)
 
