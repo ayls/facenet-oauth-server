@@ -4,9 +4,6 @@ import base64
 import detection
 import pyotp
 
-ISSUER = 'sample-auth-server'
-JWT_LIFE_SPAN = 1800
-
 class JwtUtil:
 
   def __init__(self, app_config):

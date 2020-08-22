@@ -5,7 +5,6 @@ import urllib.parse as urlparse
 import jwt_util
 
 from urllib.parse import urlencode
-from jwt_util import (JWT_LIFE_SPAN)
 from flask import Flask, redirect, render_template, request, url_for, jsonify
 from flask_cors import CORS
 
@@ -31,7 +30,7 @@ def process_redirect_uri(redirect_uri, new_entries):
 def wellKnownConfig():
   # Return jwks definition
   wrapped_data = {
-    'issuer': jwt_util.ISSUER,
+    'issuer': app.config['ISSUER'],
     'authorization_endpoint': request.host_url +'auth',
     'end_session_endpoint': request.host_url + 'signout',
     'jwks_uri': request.host_url + 'jwks'
@@ -112,7 +111,7 @@ def signin():
 
   return redirect(process_redirect_uri(redirect_uri, {
     'id_token': id_token,
-    'expires_in': JWT_LIFE_SPAN,
+    'expires_in': app.config['JWT_LIFE_SPAN'],
     'state': state
     }), code = 302)
 
