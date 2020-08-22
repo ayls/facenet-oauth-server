@@ -64,7 +64,7 @@ def auth():
 
   if not jwt.verify_client_info(client_id, redirect_uri):
     return json.dumps({
-      'error': 'invalid_client'
+      'error': 'invalid_client or redirect_uri'
     })
 
   return render_template('sign_in.html',
