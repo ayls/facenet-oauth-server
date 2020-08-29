@@ -42,8 +42,8 @@ class JwtUtil:
       'name': username,
       'nonce': nonce,
       'aud': client_id,
-      'iat': time.time(),
-      'exp': time.time() + self.app_config['JWT_LIFE_SPAN']
+      'iat':  (int)(time.time()),
+      'exp':  (int)(time.time()) + self.app_config['JWT_LIFE_SPAN']
     }
 
     id_token = jwt.encode(payload, self.private_key, algorithm = 'RS256').decode()
