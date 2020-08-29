@@ -41,22 +41,29 @@
   </head>
   <body>
     <div id="app">
-      <h1>Verify your identity</h1>      
-      <button id="play">Start your webcam to begin</button>
-      <video id="video" width="640" height="480"></video>  
-      <canvas id="canvas" width="640" height="480" hidden></canvas>       
-      <form action="/signin" method="post" onsubmit="return takeSnapshotAndSubmit()">
-        <input type="hidden" id="captured_image_data" name="captured_image_data">
-        <input type="hidden" name="client_id" value="{{client_id}}">
-        <input type="hidden" name="redirect_uri" value="{{redirect_uri}}">
-        <input type="hidden" name="state" value="{{state}}">
-        <input type="hidden" name="nonce" value="{{nonce}}">
-        <input type="number" id="otp" name="otp" value="{{otp}}" placeholder="OTP" style="display: none;">
-        <input id="submit" type="submit" value="Verify my identity" style="display: none;">
-      </form>       
+      <div id="formUi">
+        <h1>Verify your identity</h1>     
+        <button id="play">Start your webcam to begin</button>
+        <video id="video" width="640" height="480"></video>  
+        <canvas id="canvas" width="640" height="480" hidden></canvas>       
+        <form action="/signin" method="post" onsubmit="return takeSnapshotAndSubmit()">
+          <input type="hidden" id="captured_image_data" name="captured_image_data">
+          <input type="hidden" name="client_id" value="{{client_id}}">
+          <input type="hidden" name="redirect_uri" value="{{redirect_uri}}">
+          <input type="hidden" name="state" value="{{state}}">
+          <input type="hidden" name="nonce" value="{{nonce}}">
+          <input type="number" id="otp" name="otp" value="{{otp}}" placeholder="OTP" style="display: none;">
+          <input id="submit" type="submit" value="Verify my identity" style="display: none;">
+        </form>       
+      </div>
+      <div id="progressUi" style="display: none;">
+        <h1>Verification in progress...</h1>     
+      </div>
     </div>
 
     <script>
+      const formUi = document.getElementById("formUi")
+      const progressUi = document.getElementById("progressUi")    
       const video = document.getElementById("video")
       const canvas = document.getElementById("canvas")
       const play = document.getElementById("play")
@@ -84,6 +91,8 @@
 	      ctx.drawImage(video, 0, 0, 640, 480)
         const dataUrl = canvas.toDataURL("image/jpeg")
         capturedImageData.value = dataUrl
+        formUi.style.display = "none"
+        progressUi.style.display = "block"          
         return true
       }
 

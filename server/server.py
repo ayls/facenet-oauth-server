@@ -22,8 +22,7 @@ def process_redirect_uri(redirect_uri, new_entries):
   url_parts = list(urlparse.urlparse(redirect_uri))
   queries = dict(urlparse.parse_qsl(url_parts[4]))
   queries.update(new_entries)
-  url_parts[4] = urlencode(queries)
-  url = redirect_uri + "#" + url_parts[4]
+  url = redirect_uri + "#" + urlencode(queries)
   return url
 
 @app.route('/.well-known/openid-configuration')
@@ -34,9 +33,9 @@ def wellKnownConfig():
     'authorization_endpoint': request.host_url +'auth',
     'end_session_endpoint': request.host_url + 'signout',
     'jwks_uri': request.host_url + 'jwks',
-    'token_endpoint_auth_methods_supported': 'none',    
+    'token_endpoint_auth_methods_supported': [ 'none' ],    
     'response_types_supported': [ 'id_token' ],
-    'esponse_modes_supported': [ 'query' ],
+    'response_modes_supported': [ 'query' ],
     'subject_types_supported': [ 'public' ],
     'id_token_signing_alg_values_supported': [ 'RS256' ],
     'grant_types_supported': [ 'implicit' ],	
@@ -76,7 +75,7 @@ def auth():
 
   return render_template('sign_in.html',
                          client_id = client_id,
-                         redirect_uri = redirect_uri,                         
+                         redirect_uri = redirect_uri,
                          state = state,
                          nonce = nonce)
 

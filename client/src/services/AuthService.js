@@ -37,6 +37,7 @@ export const useOidcClient = ({
           this.user = await this.oidcClient.signinRedirectCallback()
           this.isAuthenticated = true
         } catch (e) {
+          this.isAuthenticated = false
           this.error = e
         } finally {
           this.loading = false
@@ -49,6 +50,8 @@ export const useOidcClient = ({
       /** Logs the user out and removes their session on the authorization server */
       async logout () {
         await this.oidcClient.signoutRedirect()
+        this.user = null
+        this.isAuthenticated = false
       }
     },
     /** Use this lifecycle method to instantiate the OIDC client */
@@ -60,8 +63,7 @@ export const useOidcClient = ({
         client_id: options.client_id,
         redirect_uri: redirectUri,
         response_type: options.response_type,
-        scope: options.scope,
-        metadata: options.metadata
+        scope: options.scope
       })
 
       try {
