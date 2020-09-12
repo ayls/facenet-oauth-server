@@ -1,14 +1,13 @@
 class Config(object):
-  ISSUER = 'sample-auth-server'
-  JWT_LIFE_SPAN = 1800  
-  CLIENT_IDS = []
-  REDIRECT_URIS = []
+  ISSUER = 'facenet-oauth'
+  JWT_LIFE_SPAN = 43200  
+  CLIENT_REDIRECTS = {}
   USER_OTP_SECRETS = {}
 
 class DevelopmentConfig(Config):
-  CLIENT_IDS = [ 'sample-client' ]
-  REDIRECT_URIS = [ 'http://localhost:8080' ]
-  USER_OTP_SECRETS = { 'YourUsername': 'ValueReturnedByPyOTP' }
+  CLIENT_REDIRECTS = { 'sample-client': 'http://localhost:8080' }
+  USER_OTP_SECRETS = { 'you': 'your-key' }
 
 class ProductionConfig(Config):
-  pass
+  CLIENT_REDIRECTS = {}
+  USER_OTP_SECRETS = {}
