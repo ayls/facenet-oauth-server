@@ -92,7 +92,7 @@ pyotp.random_base32()  # note the return value and use this to configure your au
 USER_OTP_SECRETS = { 'YourUsername': 'ValueReturnedByPyOTP' }
 
 # update USER_OTP_SECRETS in local.settings.json (in azure_functions folder)
-USER_OTP_SECRETS = { 'YourUsername': 'ValueReturnedByPyOTP' }
+USER_OTP_SECRETS = { \"YourUsername\": \"ValueReturnedByPyOTP\" }
 ```
 
 ### Run Server
