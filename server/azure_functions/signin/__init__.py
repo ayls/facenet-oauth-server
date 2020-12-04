@@ -49,7 +49,7 @@ def main(req: func.HttpRequest) -> func.HttpResponse:
   if username is None:
     return func.HttpResponse(
           status_code=302,
-          headers={ 'Location': '/api/accessdenied' })
+          headers={ 'Location': '/accessdenied' })
 
   idToken = jwtUtil.generate_id_token(clientId, username, nonce)
   return redirect(redirectUri, {
