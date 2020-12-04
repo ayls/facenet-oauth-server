@@ -46,13 +46,13 @@
         <button id="play">Start your webcam to begin</button>
         <video id="video" width="640" height="480"></video>  
         <canvas id="canvas" width="640" height="480" hidden></canvas>       
-        <form action="/signin" method="post" onsubmit="return takeSnapshotAndSubmit()">
+        <form action="/api/signin" method="post" onsubmit="return takeSnapshotAndSubmit()">
           <input type="hidden" id="captured_image_data" name="captured_image_data">
           <input type="hidden" name="client_id" value="{{client_id}}">
           <input type="hidden" name="redirect_uri" value="{{redirect_uri}}">
           <input type="hidden" name="state" value="{{state}}">
           <input type="hidden" name="nonce" value="{{nonce}}">
-          <input type="number" id="otp" name="otp" value="{{otp}}" placeholder="OTP" style="display: none;">
+          <input type="number" id="otp" name="otp" placeholder="OTP" style="display: none;">
           <input id="submit" type="submit" value="Verify my identity" style="display: none;">
         </form>       
       </div>

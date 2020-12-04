@@ -1,0 +1,103 @@
+<!DOCTYPE html>
+<html>
+  <head>
+    <meta charset="utf-8">
+    <meta name="viewport" content="width=device-width,initial-scale=1.0">
+    <title>Sign in</title>
+    <style>
+      body {
+        background-color: #F0F0F0;
+        font-family: Arial, Helvetica, sans-serif;
+      }
+      h1 {
+        font-weight: normal;        
+      }
+      button, input[type=submit] {
+        background-color: #41B883;
+        border: none;
+        color: white;
+        margin: 10px auto 10px auto;
+        padding: 15px 32px;
+        text-align: center;
+        text-decoration: none;
+        display: block;
+        font-size: 16px;
+        width: 640px
+      }
+      #app {
+        text-align: center;
+        color: #2c3e50;
+        margin-top: 60px;
+      }
+      #video {
+        background-color: #000000;
+      }
+      #otp {
+        margin: 10px auto 0 auto;
+        width: 634px;
+        font-size: 20px;
+      }
+    </style>
+  </head>
+  <body>
+    <div id="app">
+      <div id="formUi">
+        <h1>Verify your identity</h1>     
+        <button id="play">Start your webcam to begin</button>
+        <video id="video" width="640" height="480"></video>  
+        <canvas id="canvas" width="640" height="480" hidden></canvas>       
+        <form action="/signin" method="post" onsubmit="return takeSnapshotAndSubmit()">
+          <input type="hidden" id="captured_image_data" name="captured_image_data">
+          <input type="hidden" name="client_id" value="{{client_id}}">
+          <input type="hidden" name="redirect_uri" value="{{redirect_uri}}">
+          <input type="hidden" name="state" value="{{state}}">
+          <input type="hidden" name="nonce" value="{{nonce}}">
+          <input type="number" id="otp" name="otp" placeholder="OTP" style="display: none;">
+          <input id="submit" type="submit" value="Verify my identity" style="display: none;">
+        </form>       
+      </div>
+      <div id="progressUi" style="display: none;">
+        <h1>Verification in progress...</h1>     
+      </div>
+    </div>
+
+    <script>
+      const formUi = document.getElementById("formUi")
+      const progressUi = document.getElementById("progressUi")    
+      const video = document.getElementById("video")
+      const canvas = document.getElementById("canvas")
+      const play = document.getElementById("play")
+      const otp = document.getElementById("otp");
+      const submit = document.getElementById("submit")      
+      const capturedImageData = document.getElementById("captured_image_data")      
+
+      function init() {
+        if (navigator.mediaDevices && navigator.mediaDevices.getUserMedia) {
+          navigator.mediaDevices.getUserMedia({ video: true, audio: false }).then(stream => {
+            video.srcObject = stream
+          })
+        }
+      }
+
+      play.addEventListener("click", function() {
+        video.play()
+        play.style.display = "none"
+        otp.style.display = "block"        
+        submit.style.display = "block"
+        otp.focus()
+      })
+
+      function takeSnapshotAndSubmit() {
+        const ctx = canvas.getContext("2d")
+	      ctx.drawImage(video, 0, 0, 640, 480)
+        const dataUrl = canvas.toDataURL("image/jpeg")
+        capturedImageData.value = dataUrl
+        formUi.style.display = "none"
+        progressUi.style.display = "block"          
+        return true
+      }
+
+      init()
+    </script>       
+  </body>
+</html>

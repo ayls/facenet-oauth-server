@@ -17,8 +17,10 @@ class Detection:
     self.device = torch.device('cuda:0' if torch.cuda.is_available() else 'cpu')
     print('Running on device: {}'.format(self.device))
 
-    self.stored_embeddings = torch.load('embeddings.pt')
-    self.stored_names = np.load('names.npy')
+    script_path = os.path.abspath(__file__)
+    script_dir = os.path.dirname(script_path)
+    self.stored_embeddings = torch.load(os.path.join(script_dir, 'embeddings.pt'))
+    self.stored_names = np.load(os.path.join(script_dir, 'names.npy'))
 
     # face detection pipeline
     self.mtcnn = MTCNN(

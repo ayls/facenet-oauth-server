@@ -27,7 +27,7 @@ def process_redirect_uri(redirect_uri, new_entries):
 
 @app.route('/.well-known/openid-configuration')
 def wellKnownConfig():
-  # Return jwks definition
+  # Return openid configuration
   wrapped_data = {
     'issuer': app.config['ISSUER'],
     'authorization_endpoint': request.host_url +'auth',
@@ -57,7 +57,7 @@ def jwks():
 
 @app.route('/auth')
 def auth():
-  # Describe the access request of the client and ask user for approval
+  # auth page
   client_id = request.args.get('client_id')
   redirect_uri = request.args.get('redirect_uri')
   state = request.args.get('state')
@@ -65,12 +65,12 @@ def auth():
 
   if None in [ client_id, redirect_uri, state, nonce ]:
     return json.dumps({
-      'error': 'invalid_request'
+      'error': 'invalid request'
     }), 400
 
   if not jwt.verify_client_info(client_id, redirect_uri):
     return json.dumps({
-      'error': 'invalid_client or redirect_uri'
+      'error': 'invalid client_id or redirect_uri'
     })
 
   return render_template('sign_in.html',
@@ -102,12 +102,12 @@ def signin():
 
   if None in [captured_image_data, otp, client_id, redirect_uri, state, nonce]:
     return json.dumps({
-      'error': 'invalid_request'
+      'error': 'invalid request'
     }), 400
 
   if not jwt.verify_client_info(client_id, redirect_uri):
     return json.dumps({
-      'error": "invalid_client'
+      'error': 'invalid client_id or redirect_uri'
     }), 401  
 
   username = jwt.authenticate_user_credentials(captured_image_data, otp)

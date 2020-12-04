@@ -27,11 +27,8 @@ class JwtUtil:
     return None
 
   def verify_client_info(self, client_id, redirect_uri):
-    # verify client_id and redirect_uri validity
     try:
-      print(self.app_config['CLIENT_REDIRECTS'])
       configured_redirect = self.app_config['CLIENT_REDIRECTS'][client_id]
-      print(configured_redirect)      
       return redirect_uri == configured_redirect
     except:
       return False
