@@ -46,7 +46,7 @@
         <button id="play">Start your webcam to begin</button>
         <video id="video" width="640" height="480"></video>  
         <canvas id="canvas" width="640" height="480" hidden></canvas>       
-        <form action="/api/signin" method="post" onsubmit="return takeSnapshotAndSubmit()">
+        <form action="/signin" method="post" onsubmit="return takeSnapshotAndSubmit()">
           <input type="hidden" id="captured_image_data" name="captured_image_data">
           <input type="hidden" name="client_id" value="{{client_id}}">
           <input type="hidden" name="redirect_uri" value="{{redirect_uri}}">

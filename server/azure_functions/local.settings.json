@@ -5,7 +5,7 @@
     "AzureWebJobsStorage": "UseDevelopmentStorage=true",
     "ISSUER" : "facenet-oauth",
     "JWT_LIFE_SPAN" : 43200,
-    "HOST_URL" : "http://localhost:7071/api",
+    "HOST_URL" : "http://localhost:7071",
     "CLIENT_REDIRECTS" : "{ \"sample-client\": \"http://localhost:8080\" }",
     "USER_OTP_SECRETS" : "{ \"you\": \"your-key\" }"
   },
