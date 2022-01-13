@@ -5,7 +5,7 @@ pyotp==2.4.0
 pyjwt==1.7.1
 cryptography==3.3.2
 numpy==1.18.0
-Pillow==7.2.0
+Pillow==9.0.0
 urllib3==1.25.8
 -f https://download.pytorch.org/whl/torch_stable.html
 facenet-pytorch==1.0.1
