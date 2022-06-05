@@ -4,20 +4,20 @@ A PoC OAuth server that uses face detection (based on FaceNet) instead of userna
 
 ## Setup
 
-### Python (3.7) environment Setup
+### Python (3.8) environment Setup
 
 ``` bash
 # install PyTorch
-pip install torch===1.3.1 torchvision===0.4.2 -f https://download.pytorch.org/whl/torch_stable.html
-
-# install other requirements
-pip install -r requirements.txt
+pip install torch===1.4.0 torchvision===0.5.0 -f https://download.pytorch.org/whl/torch_stable.html
 ```
 
 ### Generate embedding vectors
 ``` bash
 # cd into training directory
 cd training
+
+# install python packages
+pip install -r requirements.txt
 
 # copy one training image per person into training_images directory
 # the structure should look something like
@@ -103,6 +103,9 @@ USER_OTP_SECRETS = { \"YourUsername\": \"ValueReturnedByPyOTP\" }
 # cd into server directory
 cd server/flask
 
+# install python packages
+pip install -r requirements.txt
+
 # set environment (production or development)
 export FLASK_ENV=development
 
@@ -117,6 +120,9 @@ Ensure you have [Azure Function tools installed](https://docs.microsoft.com/en-u
 ``` bash
 # cd into server directory
 cd server/azure_functions
+
+# install python packages
+pip install -r requirements.txt
 
 func host start --cors *
 ```
